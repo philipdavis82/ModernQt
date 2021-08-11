@@ -13,9 +13,10 @@ __global__.HOME_DIR = os.path.abspath(os.path.split(__file__)[0])
 # import PyQt5.QtCore as QtCore
 # import PyQt5.QtGui as QtGui
 import PyQt5.QtWidgets as QtWidgets
-
+import PyQt5.QtCore as QtCore
 import qtapp
 if __name__ == "__main__":
+    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_Use96Dpi)
     qapp = QtWidgets.QApplication(sys.argv)
     with open(os.path.join("qtapp","css","dark.qss"),'r') as file:
         styletxt = file.read()

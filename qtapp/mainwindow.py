@@ -23,7 +23,7 @@ class mainWindow(QtWidgets.QMainWindow):
         super().__init__()
 
         #Widget Layout
-        self.setGeometry(100,100,1500,1500)
+        self.setGeometry(100,100,1000,500)
         self.centralWidget = QtWidgets.QWidget(self)
         self.layout = QtWidgets.QGridLayout(self.centralWidget)
         self.layout.setSpacing(0)
