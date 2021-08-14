@@ -3,8 +3,9 @@ import PyQt5.QtGui     as QtGui
 import PyQt5.QtWidgets as QtWidgets
 
 # Get App specific widgets
-from qtapp.appwidgets.C_QNavigator import C_QNavigatorDock,C_QNavigator
-from qtapp.appwidgets.C_QFileTree  import C_QFileTree
+from qtapp.widgets.C_QNavigator import C_QNavigatorDock,C_QNavigator
+from qtapp.widgets.C_QFileTree  import C_QFileTree
+from qtapp.widgets.C_QWindowCntl import C_QExitBtn, C_QMaxMinBtn, C_QMinimizeBtn
 from . import subwindows
 
 class Action(QtWidgets.QAction):
@@ -63,7 +64,6 @@ class mainWindow(QtWidgets.QMainWindow):
      
     def createMenu(self):
         self.mainMenu = self.menuBar()
-       
 
         self.mainMenu.installEventFilter(self)
         
@@ -78,7 +78,27 @@ class mainWindow(QtWidgets.QMainWindow):
 
         #exit
         exitAct = Action("Exit",self).connect(self.close)
-        self.mainMenu.addAction(exitAct)
+        fileMenu.addAction(exitAct)
+
+        # Setup Window Control Buttons 
+        self._menuLayout = QtWidgets.QHBoxLayout(self.mainMenu)
+        self._menuLayout.setContentsMargins(0,0,10,0)
+        self._menuLayout.setSpacing(10)
+        self._menuLayout.addStretch()
+        
+        self.minwinButton = C_QMinimizeBtn(self)
+        self._menuLayout.addWidget(self.minwinButton)
+
+        self.maxwinButton = C_QMaxMinBtn(self)
+        self.maxwinButton.clicked.connect(self.toggleMaximized)
+        self._menuLayout.addWidget(self.maxwinButton)
+
+        self.exitButton = C_QExitBtn(self)
+        self.exitButton.clicked.connect(self.close)
+        self._menuLayout.addWidget(self.exitButton)
+        
+        # Add Final Spacer To Correct for any layout issues
+        # self._menuLayout.addItem(QtWidgets.QSpacerItem(10,0))
         pass
 
     def createWidgets(self):
@@ -115,8 +135,8 @@ class mainWindow(QtWidgets.QMainWindow):
         # Left Side
         self.leftNavigator = C_QNavigator(self)
         for name,widget in self.mainWidgetMap.items(): self.leftNavigator.addButton(name,widget)
-        self.leftNavigator.setMaximumWidth(200)
-        self.leftNavigator.setMinimumWidth(200)
+        self.leftNavigator.setMaximumWidth(100)
+        self.leftNavigator.setMinimumWidth(100)
         self.addDockWidget(QtCore.Qt.LeftDockWidgetArea,C_QNavigatorDock(self,self.leftNavigator))
         self.leftNavigator.onPress.connect(self.mainWidgetChanged)
         # self.layout.addWidget(self.leftNavigator,0,0)

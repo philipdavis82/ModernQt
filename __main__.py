@@ -8,6 +8,7 @@ import sys,os
 # Setup globals
 import __global__
 __global__.HOME_DIR = os.path.abspath(os.path.split(__file__)[0])
+__global__.MEDIA_DIR = os.path.join(__global__.HOME_DIR,"qtapp","media")
 
 
 # import PyQt5.QtCore as QtCore

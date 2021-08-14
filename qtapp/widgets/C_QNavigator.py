@@ -17,7 +17,7 @@ class _C_QNavButton(QtWidgets.QWidget):
         self.setMinimumHeight(80)
         # Visual Classes
         self.__brush = QtGui.QBrush(QtGui.QColor(0x2f2f2f))
-        self.__outlinePen = QtGui.QPen(QtGui.QBrush(QtGui.QColor(0x3f3f3f)),5)
+        self.__outlinePen = QtGui.QPen(QtGui.QBrush(QtGui.QColor(0x2f2f2f)),5)
         self.__highlightPen = QtGui.QPen(QtGui.QBrush(QtGui.QColor(0x5f5f5f)),5)
         
         # Internal State Machine
