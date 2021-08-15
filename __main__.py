@@ -16,7 +16,8 @@ __global__.MEDIA_DIR = os.path.join(__global__.HOME_DIR,"qtapp","media")
 # import PyQt5.QtCore as QtCore
 # import PyQt5.QtGui as QtGui
 import PyQt5.QtWidgets as QtWidgets
-import PyQt5.QtCore as QtCore
+import PyQt5.QtCore    as QtCore
+import PyQt5.QtGui     as QtGui
 import qtapp
 if __name__ == "__main__":
     QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
@@ -28,6 +29,14 @@ if __name__ == "__main__":
     # styletxt = styletxt.replace(r"{font}","font-size: 16px;")
     # styletxt = styletxt.replace(r"{font}","")
     qapp.setStyleSheet(styletxt)
+    mainicon = QtGui.QIcon(os.path.join(__global__.MEDIA_DIR,"window.svg"))
+    qapp.setWindowIcon(mainicon)
+    
+    tray = QtWidgets.QSystemTrayIcon()
+    tray.setIcon(mainicon)
+    tray.setVisible(True)
+    
     win = qtapp.mainWindow(qapp)
+    win.setWindowIcon(mainicon)
     win.show()
     qapp.exec()

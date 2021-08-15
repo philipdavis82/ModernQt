@@ -24,7 +24,7 @@ class Action(QtWidgets.QAction):
 class mainWindow(QtWidgets.QMainWindow):
     def __init__(self,application,sysargs = None):
         super().__init__()
-
+        self.setWindowIcon(QtGui.QIcon(os.path.join(__global__.MEDIA_DIR,"window.svg")))
         #Widget Layout
         self.setGeometry(100,100,1000,500)
         self.centralWidget = QtWidgets.QWidget(self)
@@ -124,6 +124,7 @@ class mainWindow(QtWidgets.QMainWindow):
         self._menuLayout.addStretch()
         
         self.minwinButton = C_QMinimizeBtn(self)
+        self.minwinButton.clicked.connect(self.showMinimized)
         self._menuLayout.addWidget(self.minwinButton)
 
         self.maxwinButton = C_QMaxMinBtn(self)
