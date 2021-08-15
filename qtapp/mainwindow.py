@@ -74,22 +74,48 @@ class mainWindow(QtWidgets.QMainWindow):
         self.mainMenu.installEventFilter(self)
         # self.mainMenu.setIconSize(self.mainMenu.height(),self.mainMenu.height())
         #
-        ## File Menu
+        ## ICON
         #
         self.__mainIcon = self.mainMenu.addMenu( QtGui.QIcon(os.path.join(__global__.MEDIA_DIR,"pie.svg")) , "")
         self.__mainIcon.setEnabled(False)
-        # self.__mainIcon.setFixedWidth(200)
-
+        #|====================
+        #|   Start Menus
+        #|===================
+        
+        #
+        ## File Menu
+        #
         fileMenu = self.mainMenu.addMenu('&File')
-        fileMenu.repaint()
 
         # Actions
-        # loadAct = Action("load",self).connect(self.openFile)
-        # self.mainMenu.addAction(loadAct)
-
+        fileMenu.addAction(Action("load",self).connect(self.dummy)) 
+        fileMenu.addAction(Action("save",self).connect(self.dummy)) 
+        
         #exit
+        fileMenu.addSeparator()
         exitAct = Action("Exit",self).connect(self.close)
         fileMenu.addAction(exitAct)
+
+        #
+        ## Edit Menu
+        #
+        editMenu = self.mainMenu.addMenu('&Edit')
+
+        # Actions
+        editMenu.addAction(Action("settings",self).connect(self.dummy))
+
+        #
+        ## Help Menu
+        #
+        helpMenu = self.mainMenu.addMenu('&Help')
+
+        # Actions
+        helpMenu.addAction(Action("help",self).connect(self.dummy)) 
+
+
+        #|====================
+        #|  Finished Menus
+        #|===================
 
         # Setup Window Control Buttons 
         self._menuLayout = QtWidgets.QHBoxLayout(self.mainMenu)
@@ -113,9 +139,6 @@ class mainWindow(QtWidgets.QMainWindow):
         pass
 
     def createWidgets(self):
-        # self.searchWidget = subwindows.SearchWidget(self)
-        # self.searchWidget.setVisible(False)
-        # self.mainWidgetMap['search'] = self.searchWidget
         self.mainWidgetMap['tree'] = C_QFileTree(self)
         self.mainWidgetMap['tree'].setVisible(False)
 
@@ -146,16 +169,11 @@ class mainWindow(QtWidgets.QMainWindow):
         # Left Side
         self.leftNavigator = C_QNavigator(self)
         for name,widget in self.mainWidgetMap.items(): self.leftNavigator.addButton(name,widget)
-        self.leftNavigator.setMaximumWidth(100)
-        self.leftNavigator.setMinimumWidth(100)
-        # self.addDockWidget(QtCore.Qt.LeftDockWidgetArea,C_QNavigatorDock(self,self.leftNavigator))
+        
         self.__docklayout.addWidget(self.leftNavigator,1,0)
         self.leftNavigator.onPress.connect(self.mainWidgetChanged)
-        # self.layout.addWidget(self.leftNavigator,0,0)
-
+        
         self.leftNavigator.setWidget("tree")
-        # self.mainWidgetChanged('tree')
-        # self.layout.addWidget(self.searchWidget,0,1)
         
         pass
 
@@ -212,3 +230,17 @@ class mainWindow(QtWidgets.QMainWindow):
         self.currentMainWidget = self.mainWidgetMap[widgetName]
         self.layout.addWidget(self.currentMainWidget,0,1)
         self.currentMainWidget.setVisible(True)
+    
+    #|==================================================================================
+    #|                              User Functions 
+    #|==================================================================================
+    def createWidgets(self):
+        self.mainWidgetMap['tree'] = C_QFileTree(self)
+        self.mainWidgetMap['tree'].setVisible(False)
+
+        self.mainWidgetMap['dummy'] = QtWidgets.QWidget(self)
+        self.mainWidgetMap['dummy'].setVisible(False)
+        pass
+
+    def dummy(self):
+        print("Dummy Function Called")

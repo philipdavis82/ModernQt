@@ -9,6 +9,11 @@ import PyQt5.QtWidgets as QtWidgets
 
 
 NAVIGATION_STYLE_SHEET="""
+QWidget
+{
+    color: #1f1f1f;
+    background-color: #1f1f1f;
+}
 QPushButton
 {
     font-size: 32px;
@@ -110,9 +115,11 @@ class _C_QNavButton(QtWidgets.QPushButton):
 class C_QNavigator(QtWidgets.QWidget):
     onPress = QtCore.pyqtSignal(str)
     onHover = QtCore.pyqtSignal(str)
-    
     def __init__(self,parent,*args,**kwargs):
         super().__init__(parent)
+        self.setAttribute(QtCore.Qt.WA_StyledBackground)
+        self.setMaximumWidth(50)
+        self.setStyleSheet(NAVIGATION_STYLE_SHEET)
         self.__buttonList = {}
         self.__widgetList = {}
 
@@ -129,19 +136,19 @@ class C_QNavigator(QtWidgets.QWidget):
         self.__repaint = False
         self.__lastActive = None
         # Set Style
-        self.setStyleSheet("background-color:#1f1f1f;")
+        
 
-    def resizeEvent(self,event):
-        self.__repaint = True
+    # def resizeEvent(self,event):
+        # self.__repaint = True
 
-    def paintEvent(self,event):
-        if not self.__repaint : return
-        self.__repaint = True
-        painter = QtGui.QPainter(self)
-        painter.setPen(self.__outlinePen)
-        width = self.width()
-        height = self.height()
-        painter.fillRect(0,0,width,height,self.__brush)
+    # def paintEvent(self,event):
+    #     if not self.__repaint : return
+    #     self.__repaint = True
+    #     painter = QtGui.QPainter(self)
+    #     painter.setPen(self.__outlinePen)
+    #     width = self.width()
+    #     height = self.height()
+    #     painter.fillRect(0,0,width,height,self.__brush)
 
     def addButton(self,name:str,widget):
         icon = None

@@ -21,6 +21,7 @@ import qtapp
 if __name__ == "__main__":
     QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
     QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps)
+    # QtWidgets.QApplication.setAttribute(QtCore.Qt.WA_StyledBackground)
     qapp = QtWidgets.QApplication(sys.argv)
     with open(os.path.join("qtapp","css","dark.qss"),'r') as file:
         styletxt = file.read()

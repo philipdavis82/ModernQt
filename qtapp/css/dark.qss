@@ -53,10 +53,7 @@ QMenuBar
     background-color: #4d4d4d;
     height: 32px;
 }
-QMenuBar::separator
-{
-    width : 10px;
-}
+
 QMenuBar::item
 {
     font-size: 20px;
@@ -92,7 +89,7 @@ QMenuBar::item:pressed
 
 QMenu
 {
-    font-size: 20px;
+    font-size: 14px;
     border: 1px solid #000;
     font-size: 20px;
     /* icon-size: 20px; */
@@ -100,19 +97,17 @@ QMenu
 
 QMenu::item
 {
-    font-size: 20px;
+    font-size: 14px;
     padding: 2px 20px 2px 20px;
 }
 
 QMenu::item:selected
 {
-    font-size: 20px;
     color: #000000;
 }
 
 QWidget:disabled
 {
-    font-size: 20px;
     color: #808080;
     background-color: #323232;
 }
@@ -434,9 +429,9 @@ QMenu::separator
     height: 2px;
     background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #161616, stop: 0.5 #151515, stop: 0.6 #212121, stop:1 #343434);
     color: white;
-    padding-left: 4px;
-    margin-left: 10px;
-    margin-right: 5px;
+    /* padding-left: 4px; */
+    /* margin-left: 10px; */
+    /* margin-right: 5px; */
 }
 
 QProgressBar
