@@ -70,6 +70,7 @@ class _C_QNavButton(QtWidgets.QPushButton):
         super().__init__(parent)
         self.setStyleSheet(NAVIGATION_STYLE_SHEET)
         self.__name = name
+        self.setToolTip(name)
         # self.__img  = img
         
         self.setMinimumHeight(50)
@@ -171,6 +172,9 @@ class C_QNavigator(QtWidgets.QWidget):
         if not self.__lastActive is None: self.__buttonList[self.__lastActive].deactivate()
         self.__lastActive = name
         self.onPress.emit(name)
+
+    def setWidget(self,name):
+        return self.__buttonPressed(name)
 
 class C_QNavigatorDock(QtWidgets.QDockWidget):
     def __init__(self,parent,nav):

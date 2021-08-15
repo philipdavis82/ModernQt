@@ -1,11 +1,12 @@
 QToolTip
 {
     font-size: 32px;
-     border: 1px solid black;
-     background-color: #ffa02f;
-     padding: 1px;
-     border-radius: 3px;
-     opacity: 100;
+    color: white;
+    border: 1px solid black;
+    background-color: #ffa02f;
+    padding: 5px;
+    border-radius: 0px;
+    opacity: 150;
 }
 
 QWidget
@@ -23,23 +24,30 @@ QWidget
 QTreeView, QListView
 {
     font-size: 32px;
-    border: 1px;
+    border: 0px;
     background-color: #323232;
-    /* margin-left: 5px; */
+    outline: none;
 }
 
+QWidget:item
+{
+    border: none;    
+}
 QWidget:item:hover
 {
-    font-size: 32px;
-    /* background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #ffa02f, stop: 1 #ca0619); */
-    color: #000000;
+    background-color: #424242;
 }
 
 QWidget:item:selected
 {
-    font-size: 32px;
-    background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #ffa02f, stop: 1 #d7801a);
+    background-color: #4d4d4d;
 }
+
+QWidget:item:focus
+{
+    background-color: #4d4d4d;
+}
+
 QMenuBar
 {
     background-color: #4d4d4d;

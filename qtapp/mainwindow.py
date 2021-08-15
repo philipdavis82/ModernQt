@@ -146,9 +146,9 @@ class mainWindow(QtWidgets.QMainWindow):
         self.leftNavigator.onPress.connect(self.mainWidgetChanged)
         # self.layout.addWidget(self.leftNavigator,0,0)
 
-        self.mainWidgetChanged('tree')
+        self.leftNavigator.setWidget("tree")
+        # self.mainWidgetChanged('tree')
         # self.layout.addWidget(self.searchWidget,0,1)
-
         
         pass
 
@@ -164,13 +164,16 @@ class mainWindow(QtWidgets.QMainWindow):
             elif (event.type() == QtCore.QEvent.MouseMove):
                 if (event.buttons() & QtCore.Qt.LeftButton) and not self.__disableDrag:
                     if self.__isMaximized:
+                        if (event.globalPos().y() < 20): return False
                         self.toggleMaximized()
                     self.move(event.globalPos() - self.dragPosition)
+                    if (event.globalPos().y() < 10): self.toggleMaximized(Maxonly=True)
                     return False
         return super(mainWindow, self).eventFilter(watched, event)
     
-    def toggleMaximized(self):
+    def toggleMaximized(self,Maxonly=False):
         if self.__isMaximized:
+            if Maxonly: return
             # self.showNormal()
             self.__disableDrag = True
             self.setGeometry(

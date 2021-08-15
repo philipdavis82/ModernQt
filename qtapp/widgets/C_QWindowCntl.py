@@ -29,10 +29,37 @@ QPushButton:pressed
 }
 """
 
+EXIT_STYLE_SHEET = """
+QPushButton
+{
+    font-size: 32px;
+    border-width: 0px;
+    border-color: #4d4d4d;
+    border-style: solid;
+    border-radius: 0;
+    padding: 0px;
+    font-size: 32px;
+    padding-left: 0px;
+    padding-right: 0px;
+    background-color: #4d4d4d;
+}
+
+QPushButton:hover
+{
+    background-color: #7FFF0000;
+    border: 0px solid QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #ffa02f, stop: 1 #d7801a);
+}
+
+QPushButton:pressed
+{
+    background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #ffa02f, stop: 1 #d7801a);
+}
+"""
+
 class C_QExitBtn(QtWidgets.QPushButton):
     def __init__(self,parent):
         super().__init__(parent)
-        self.setStyleSheet(CONTROL_STYLE_SHEET)
+        self.setStyleSheet(EXIT_STYLE_SHEET)
         self.__icon = QtGui.QIcon(
             os.path.join(__global__.MEDIA_DIR,"cancel.svg")
         )
