@@ -1,5 +1,5 @@
 # Left side navigator 
-
+import __global__,os
 
 from qtapp import subwindows
 
@@ -7,21 +7,63 @@ import PyQt5.QtCore    as QtCore
 import PyQt5.QtGui     as QtGui
 import PyQt5.QtWidgets as QtWidgets
 
-class _C_QNavButton(QtWidgets.QWidget):
-    clicked = QtCore.pyqtSignal()
+
+NAVIGATION_STYLE_SHEET="""
+QPushButton
+{
+    font-size: 32px;
+    border-width: 1px;
+    border-color: #4d4d4d;
+    border-style: solid;
+    border-radius: 0;
+    padding: 0px;
+    font-size: 32px;
+    padding-left: 0px;
+    padding-right: 0px;
+    background-color: #2f2f2f;
+}
+QPushButton:hover
+{
+    background-color: #5f5f5f
+}
+QLabel
+{
+    background-color: #2f2f2f
+}
+QLabel:hover
+{
+    background-color: #5f5f5f
+}
+"""
+
+class _C_QNavButton(QtWidgets.QPushButton):
+    # clicked = QtCore.pyqtSignal()
     def __init__(self,parent,name:str,img=None,*args,**kwargs):
         super().__init__(parent)
+        self.setStyleSheet(NAVIGATION_STYLE_SHEET)
         self.__name = name
         self.__img  = img
         
-        self.setMinimumHeight(80)
+        self.setMinimumHeight(50)
         # Visual Classes
         self.__brush = QtGui.QBrush(QtGui.QColor(0x2f2f2f))
+        self.__highlightbrush = QtGui.QBrush(QtGui.QColor(0x5f5f5f))
         self.__outlinePen = QtGui.QPen(QtGui.QBrush(QtGui.QColor(0x2f2f2f)),5)
         self.__highlightPen = QtGui.QPen(QtGui.QBrush(QtGui.QColor(0x5f5f5f)),5)
         
         # Internal State Machine
         self.__highlight = False
+
+        self.__layout = QtWidgets.QHBoxLayout(self)
+        self.__icon   = QtGui.QIcon( os.path.join(__global__.MEDIA_DIR,"home.svg") )
+        self.__iconlbl   = QtWidgets.QLabel(self)
+        self.__iconlbl.setPixmap(self.__icon.pixmap(self.__iconlbl.size()))
+        self.__layout.addWidget(self.__iconlbl)
+        self.__layout.setContentsMargins(0,0,0,0)
+
+
+    def resizeEvent(self,event):
+        self.__iconlbl.setPixmap(self.__icon.pixmap(self.__iconlbl.size()))
 
     def enterEvent(self,event):
         self.__highlight = True
@@ -32,14 +74,13 @@ class _C_QNavButton(QtWidgets.QWidget):
     def mousePressEvent(self,event):
         self.clicked.emit()
 
-    def paintEvent(self,event):
-        painter = QtGui.QPainter(self)
-        if self.__highlight: painter.setPen(self.__highlightPen) 
-        else               : painter.setPen(self.__outlinePen)
-        width = self.width()
-        height = self.height()
-        painter.fillRect(0,0,width,height,self.__brush)
-        painter.drawRect(1,1,width-1,height-1)
+    # def paintEvent(self,event):
+        # painter = QtGui.QPainter(self)
+        # width = self.width()
+        # height = self.height()
+        # if self.__highlight: painter.fillRect(0,0,width,height,self.__highlightbrush)
+        # else               : painter.fillRect(0,0,width,height,self.__brush)
+        
 
     # Internal Functions
     def __buildButton(self):
@@ -55,8 +96,8 @@ class C_QNavigator(QtWidgets.QWidget):
         self.__widgetList = {}
 
         self.__layout = QtWidgets.QGridLayout(self) 
-        self.__layout.setSpacing(4)
-        self.__layout.setContentsMargins(5,5,5,5)
+        self.__layout.setSpacing(0)
+        self.__layout.setContentsMargins(0,0,0,0)
         self.__layout.addItem(QtWidgets.QSpacerItem(0, 99, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding),99,0,1,1)
 
         # Visual Classes
