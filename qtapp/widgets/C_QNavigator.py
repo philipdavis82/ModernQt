@@ -36,13 +36,41 @@ QLabel:hover
 }
 """
 
+NAVIGATION_STYLE_SHEET_ACTIVATED="""
+QPushButton
+{
+    font-size: 32px;
+    border-width: 1px;
+    border-color: #4d4d4d;
+    border-style: solid;
+    border-radius: 0;
+    padding: 0px;
+    font-size: 32px;
+    padding-left: 0px;
+    padding-right: 0px;
+    background-color: #5f5f5f;
+}
+QPushButton:hover
+{
+    background-color: #5f5f5f
+}
+QLabel
+{
+    background-color: #5f5f5f
+}
+QLabel:hover
+{
+    background-color: #5f5f5f
+}
+"""
+
 class _C_QNavButton(QtWidgets.QPushButton):
     # clicked = QtCore.pyqtSignal()
-    def __init__(self,parent,name:str,img=None,*args,**kwargs):
+    def __init__(self,parent,name:str,icon:str=None,*args,**kwargs):
         super().__init__(parent)
         self.setStyleSheet(NAVIGATION_STYLE_SHEET)
         self.__name = name
-        self.__img  = img
+        # self.__img  = img
         
         self.setMinimumHeight(50)
         # Visual Classes
@@ -55,12 +83,18 @@ class _C_QNavButton(QtWidgets.QPushButton):
         self.__highlight = False
 
         self.__layout = QtWidgets.QHBoxLayout(self)
-        self.__icon   = QtGui.QIcon( os.path.join(__global__.MEDIA_DIR,"home.svg") )
+        if icon is None: self.__icon   = QtGui.QIcon( os.path.join(__global__.MEDIA_DIR,"broken.svg") )
+        else           : self.__icon   = QtGui.QIcon( os.path.join(__global__.MEDIA_DIR,icon) )
         self.__iconlbl   = QtWidgets.QLabel(self)
         self.__iconlbl.setPixmap(self.__icon.pixmap(self.__iconlbl.size()))
         self.__layout.addWidget(self.__iconlbl)
         self.__layout.setContentsMargins(0,0,0,0)
 
+    def activate(self):
+        self.setStyleSheet(NAVIGATION_STYLE_SHEET_ACTIVATED)
+
+    def deactivate(self):
+        self.setStyleSheet(NAVIGATION_STYLE_SHEET)
 
     def resizeEvent(self,event):
         self.__iconlbl.setPixmap(self.__icon.pixmap(self.__iconlbl.size()))
@@ -106,7 +140,7 @@ class C_QNavigator(QtWidgets.QWidget):
 
         # State Machine information
         self.__repaint = False
-        
+        self.__lastActive = None
         # Set Style
         self.setStyleSheet("background-color:#1f1f1f;")
 
@@ -123,12 +157,19 @@ class C_QNavigator(QtWidgets.QWidget):
         painter.fillRect(0,0,width,height,self.__brush)
 
     def addButton(self,name:str,widget):
-        self.__buttonList[name] = _C_QNavButton(self,name)
+        icon = None
+        try     : icon = widget.icon()
+        except  : print(f"Failed to call icon() method on widget {widget}")
+        self.__buttonList[name] = _C_QNavButton(self,name,icon)
         self.__widgetList[name] = widget
         self.__layout.addWidget(self.__buttonList[name],len(self.__buttonList)-1,0)
         self.__buttonList[name].clicked.connect(lambda: self.__buttonPressed(name))
         
     def __buttonPressed(self,name):
+        if self.__lastActive == name: return
+        self.__buttonList[name].activate()
+        if not self.__lastActive is None: self.__buttonList[self.__lastActive].deactivate()
+        self.__lastActive = name
         self.onPress.emit(name)
 
 class C_QNavigatorDock(QtWidgets.QDockWidget):

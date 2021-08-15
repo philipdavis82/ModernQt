@@ -23,8 +23,9 @@ QWidget
 QTreeView, QListView
 {
     font-size: 32px;
-    background-color: silver;
-    margin-left: 5px;
+    border: 1px;
+    background-color: #323232;
+    /* margin-left: 5px; */
 }
 
 QWidget:item:hover
@@ -104,7 +105,8 @@ QWidget:disabled
 QAbstractItemView
 {
     font-size: 32px;
-    background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #4d4d4d, stop: 0.1 #646464, stop: 1 #5d5d5d);
+    background-color: #323232;  
+    /* background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #4d4d4d, stop: 0.1 #646464, stop: 1 #5d5d5d); */
 }
 
 QWidget:focus
@@ -130,11 +132,11 @@ QPushButton
     border-width: 1px;
     border-color: #1e1e1e;
     border-style: solid;
-    border-radius: 6;
+    border-radius: 0;
     padding: 3px;
     font-size: 32px;
-    padding-left: 5px;
-    padding-right: 5px;
+    /* padding-left: 5px; */
+    /* padding-right: 5px; */
     min-width: 40px;
     background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #565656, stop: 0.1 #525252, stop: 0.5 #4e4e4e, stop: 0.9 #4a4a4a, stop: 1 #464646);
 }
@@ -344,9 +346,10 @@ QHeaderView::section
 QCheckBox:disabled
 {
     font-size: 32px;
-color: #414141;
+    color: #414141;
 }
-QDickWidget
+
+QDockWidget
 {
     background-color: #1f1f1f;
     margin: 0px; 

@@ -26,7 +26,11 @@ class mainWindow(QtWidgets.QMainWindow):
         #Widget Layout
         self.setGeometry(100,100,1000,500)
         self.centralWidget = QtWidgets.QWidget(self)
-        self.layout = QtWidgets.QGridLayout(self.centralWidget)
+        self.__docklayout = QtWidgets.QGridLayout(self.centralWidget)
+        self.__docklayout.setSpacing(0)
+        self.__docklayout.setContentsMargins(0,0,0,0)
+        self.layout = QtWidgets.QGridLayout()
+        self.__docklayout.addLayout(self.layout,1,1)
         self.layout.setSpacing(0)
         self.layout.setContentsMargins(0,0,0,0)
         self.setContentsMargins(0,0,0,0)
@@ -137,11 +141,12 @@ class mainWindow(QtWidgets.QMainWindow):
         for name,widget in self.mainWidgetMap.items(): self.leftNavigator.addButton(name,widget)
         self.leftNavigator.setMaximumWidth(100)
         self.leftNavigator.setMinimumWidth(100)
-        self.addDockWidget(QtCore.Qt.LeftDockWidgetArea,C_QNavigatorDock(self,self.leftNavigator))
+        # self.addDockWidget(QtCore.Qt.LeftDockWidgetArea,C_QNavigatorDock(self,self.leftNavigator))
+        self.__docklayout.addWidget(self.leftNavigator,1,0)
         self.leftNavigator.onPress.connect(self.mainWidgetChanged)
         # self.layout.addWidget(self.leftNavigator,0,0)
 
-        self.mainWidgetChanged('dummy')
+        self.mainWidgetChanged('tree')
         # self.layout.addWidget(self.searchWidget,0,1)
 
         

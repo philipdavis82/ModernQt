@@ -17,12 +17,16 @@ class C_QFileTree(QtWidgets.QWidget):
         self.model.setRootPath('')
         self.tree = QtWidgets.QTreeView()
         self.tree.setModel(self.model)
+        self.tree.setColumnHidden(1,True)
+        self.tree.setColumnHidden(2,True)
+        self.tree.setColumnHidden(3,True)
+        self.tree.setHeaderHidden(True)
         
-        self.tree.setAnimated(False)
+        self.tree.setAnimated(True)
         self.tree.setIndentation(20)
         self.tree.setSortingEnabled(True)
         
-        self.tree.setWindowTitle("Dir View")
+        # self.tree.setWindowTitle("Dir View")
         # self.tree.resize(640, 480)
         
         self.windowLayout.addWidget(self.tree,0,0)
