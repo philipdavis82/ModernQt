@@ -1,3 +1,5 @@
+import __global__,os
+
 import PyQt5.QtCore    as QtCore
 import PyQt5.QtGui     as QtGui
 import PyQt5.QtWidgets as QtWidgets
@@ -70,11 +72,16 @@ class mainWindow(QtWidgets.QMainWindow):
         self.mainMenu = self.menuBar()
 
         self.mainMenu.installEventFilter(self)
-        
+        # self.mainMenu.setIconSize(self.mainMenu.height(),self.mainMenu.height())
         #
         ## File Menu
         #
+        self.__mainIcon = self.mainMenu.addMenu( QtGui.QIcon(os.path.join(__global__.MEDIA_DIR,"pie.svg")) , "")
+        self.__mainIcon.setEnabled(False)
+        # self.__mainIcon.setFixedWidth(200)
+
         fileMenu = self.mainMenu.addMenu('&File')
+        fileMenu.repaint()
 
         # Actions
         # loadAct = Action("load",self).connect(self.openFile)
@@ -86,8 +93,8 @@ class mainWindow(QtWidgets.QMainWindow):
 
         # Setup Window Control Buttons 
         self._menuLayout = QtWidgets.QHBoxLayout(self.mainMenu)
-        self._menuLayout.setContentsMargins(0,0,10,0)
-        self._menuLayout.setSpacing(10)
+        self._menuLayout.setContentsMargins(0,0,0,0)
+        self._menuLayout.setSpacing(0)
         self._menuLayout.addStretch()
         
         self.minwinButton = C_QMinimizeBtn(self)
@@ -117,7 +124,7 @@ class mainWindow(QtWidgets.QMainWindow):
         pass
 
     def buildInteractions(self):
-        for i in range(4):
+        for i in range(3):
             grip = QtWidgets.QSizeGrip(self)
             grip.resize(self.gripSize, self.gripSize)
             self.grips.append(grip)
@@ -127,12 +134,12 @@ class mainWindow(QtWidgets.QMainWindow):
         self.__isMaximized = False
         # top left grip doesn't need to be moved...
         # top right
-        self.grips[1].move(rect.right() - self.gripSize, 0)
+        # self.grips[1].move(rect.right() - self.gripSize, 0)
         # bottom right
-        self.grips[2].move(
+        self.grips[1].move(
             rect.right() - self.gripSize, rect.bottom() - self.gripSize)
         # bottom left
-        self.grips[3].move(0, rect.bottom() - self.gripSize)
+        self.grips[2].move(0, rect.bottom() - self.gripSize)
 
     def createInputs(self):
         self.createWidgets()

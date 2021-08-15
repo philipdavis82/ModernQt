@@ -5,6 +5,8 @@
 
 import sys,os
 
+# os.environ["QT_ENABLE_HIGHDPI_SCALING"] = '1'
+
 # Setup globals
 import __global__
 __global__.HOME_DIR = os.path.abspath(os.path.split(__file__)[0])
@@ -17,10 +19,13 @@ import PyQt5.QtWidgets as QtWidgets
 import PyQt5.QtCore as QtCore
 import qtapp
 if __name__ == "__main__":
-    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_Use96Dpi)
+    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
+    QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps)
     qapp = QtWidgets.QApplication(sys.argv)
     with open(os.path.join("qtapp","css","dark.qss"),'r') as file:
         styletxt = file.read()
+    # styletxt = styletxt.replace(r"{font}","font-size: 16px;")
+    # styletxt = styletxt.replace(r"{font}","")
     qapp.setStyleSheet(styletxt)
     win = qtapp.mainWindow(qapp)
     win.show()

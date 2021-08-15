@@ -12,10 +12,7 @@ NAVIGATION_STYLE_SHEET="""
 QPushButton
 {
     font-size: 32px;
-    border-width: 1px;
-    border-color: #4d4d4d;
-    border-style: solid;
-    border-radius: 0;
+    border: none;
     padding: 0px;
     font-size: 32px;
     padding-left: 0px;
@@ -24,15 +21,11 @@ QPushButton
 }
 QPushButton:hover
 {
-    background-color: #5f5f5f
+    background-color: #5f5f5f;
 }
 QLabel
 {
-    background-color: #2f2f2f
-}
-QLabel:hover
-{
-    background-color: #5f5f5f
+    background-color: transparent;
 }
 """
 
@@ -40,10 +33,7 @@ NAVIGATION_STYLE_SHEET_ACTIVATED="""
 QPushButton
 {
     font-size: 32px;
-    border-width: 1px;
-    border-color: #4d4d4d;
-    border-style: solid;
-    border-radius: 0;
+    border: none;
     padding: 0px;
     font-size: 32px;
     padding-left: 0px;
@@ -52,15 +42,11 @@ QPushButton
 }
 QPushButton:hover
 {
-    background-color: #5f5f5f
+    background-color: #5f5f5f;
 }
 QLabel
 {
-    background-color: #5f5f5f
-}
-QLabel:hover
-{
-    background-color: #5f5f5f
+    background-color: transparent;
 }
 """
 
@@ -89,7 +75,7 @@ class _C_QNavButton(QtWidgets.QPushButton):
         self.__iconlbl   = QtWidgets.QLabel(self)
         self.__iconlbl.setPixmap(self.__icon.pixmap(self.__iconlbl.size()))
         self.__layout.addWidget(self.__iconlbl)
-        self.__layout.setContentsMargins(0,0,0,0)
+        self.__layout.setContentsMargins(4,4,4,4)
 
     def activate(self):
         self.setStyleSheet(NAVIGATION_STYLE_SHEET_ACTIVATED)
