@@ -5,9 +5,10 @@ import PyQt5.QtGui     as QtGui
 import PyQt5.QtWidgets as QtWidgets
 
 # Get App specific widgets
-from qtapp.widgets.C_QNavigator import C_QNavigatorDock,C_QNavigator
-from qtapp.widgets.C_QFileTree  import C_QFileTree
-from qtapp.widgets.C_QWindowCntl import C_QExitBtn, C_QMaxMinBtn, C_QMinimizeBtn
+from qtapp.widgets.C_QNavigator         import C_QNavigatorDock,C_QNavigator
+from qtapp.widgets.C_QFileTree          import C_QFileTree
+from qtapp.widgets.C_QWindowCntl        import C_QExitBtn, C_QMaxMinBtn, C_QMinimizeBtn
+from qtapp.widgets.C_QScrollWidgets     import C_QScrollArea, C_QMultiScrollArea, C_QScrollItem
 from . import subwindows
 
 class Action(QtWidgets.QAction):
@@ -139,14 +140,6 @@ class mainWindow(QtWidgets.QMainWindow):
         # self._menuLayout.addItem(QtWidgets.QSpacerItem(10,0))
         pass
 
-    def createWidgets(self):
-        self.mainWidgetMap['tree'] = C_QFileTree(self)
-        self.mainWidgetMap['tree'].setVisible(False)
-
-        self.mainWidgetMap['dummy'] = QtWidgets.QWidget(self)
-        self.mainWidgetMap['dummy'].setVisible(False)
-        pass
-
     def buildInteractions(self):
         for i in range(3):
             grip = QtWidgets.QSizeGrip(self)
@@ -239,8 +232,18 @@ class mainWindow(QtWidgets.QMainWindow):
         self.mainWidgetMap['tree'] = C_QFileTree(self)
         self.mainWidgetMap['tree'].setVisible(False)
 
-        self.mainWidgetMap['dummy'] = QtWidgets.QWidget(self)
-        self.mainWidgetMap['dummy'].setVisible(False)
+        self.mainWidgetMap['scroll'] = C_QMultiScrollArea(self)
+        self.mainWidgetMap['scroll'].setVisible(False)
+
+        self.mainWidgetMap['scroll'].addScrollArea("left" ,C_QScrollArea(self.mainWidgetMap['scroll'],"left"))
+        self.mainWidgetMap['scroll'].addScrollArea("right",C_QScrollArea(self.mainWidgetMap['scroll'],"right"))
+        
+        widget = self.mainWidgetMap['scroll'].getWidget("left")
+        widget.addWidget('1',C_QScrollItem(widget))
+        widget.addWidget('2',C_QScrollItem(widget))
+        widget.addWidget('3',C_QScrollItem(widget))
+        widget.addWidget('4',C_QScrollItem(widget))
+        widget.addWidget('5',C_QScrollItem(widget))
         pass
 
     def dummy(self):

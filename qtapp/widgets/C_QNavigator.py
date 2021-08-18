@@ -1,8 +1,6 @@
 # Left side navigator 
 import __global__,os
 
-from qtapp import subwindows
-
 import PyQt5.QtCore    as QtCore
 import PyQt5.QtGui     as QtGui
 import PyQt5.QtWidgets as QtWidgets

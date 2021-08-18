@@ -230,106 +230,116 @@ QTextEdit:focus
 }
 
 QScrollBar:horizontal {
-     border: 1px solid #222222;
-     background: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0.0 #121212, stop: 0.2 #282828, stop: 1 #484848);
-     height: 7px;
-     margin: 0px 20px 0 20px;
+
+    font-size: 20px;
+    border: none;
+    background: transparent;
+    height: 8px;
+    margin: 2px 2px 2px 2px;
 }
 
 QScrollBar::handle:horizontal
 {
     font-size: 20px;
-      background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #ffa02f, stop: 0.5 #d7801a, stop: 1 #ffa02f);
-      min-height: 20px;
-      border-radius: 2px;
+    background: #7d7d7d;
+    min-height: 20px;
+    border-radius: 3px;
+    border: none;
 }
 
 QScrollBar::add-line:horizontal {
-      border: 1px solid #1b1b19;
-      border-radius: 2px;
-      background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #ffa02f, stop: 1 #d7801a);
-      width: 14px;
-      subcontrol-position: right;
-      subcontrol-origin: margin;
+    font-size: 20px;
+    border: none;
+    border-radius: 2px;
+    background: transparent;
+    width: 14px;
+    subcontrol-position: right;
+    subcontrol-origin: margin;
 }
 
 QScrollBar::sub-line:horizontal {
-      border: 1px solid #1b1b19;
-      border-radius: 2px;
-      background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #ffa02f, stop: 1 #d7801a);
-      width: 14px;
-     subcontrol-position: left;
-     subcontrol-origin: margin;
+    font-size: 20px;
+    border: none;
+    border-radius: 2px;
+    background: transparent;
+    width: 14px;
+    subcontrol-position: top;
+    subcontrol-origin: margin;
 }
 
 QScrollBar::right-arrow:horizontal, QScrollBar::left-arrow:horizontal
 {
     font-size: 20px;
-      border: 1px solid black;
-      width: 1px;
-      height: 1px;
-      background: white;
+      border: none;
+      width: 0px;
+      height: 0px;
+      background: transparent;
 }
 
 QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal
 {
     font-size: 20px;
-      background: none;
+    background: none;
 }
 
 QScrollBar:vertical
 {
     font-size: 20px;
-      background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0, stop: 0.0 #121212, stop: 0.2 #282828, stop: 1 #484848);
-      width: 7px;
-      margin: 20px 0 20px 0;
-      border: 1px solid #222222;
+    border: none;
+    background: transparent;
+    width: 8px;
+    margin: 2px 2px 2px 0px;
+    
 }
 
 QScrollBar::handle:vertical
 {
     font-size: 20px;
-      background: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #ffa02f, stop: 0.5 #d7801a, stop: 1 #ffa02f);
-      min-height: 20px;
-      border-radius: 2px;
+    background: #7d7d7d;
+    min-height: 20px;
+    border-radius: 3px;
+    border: none;
 }
 
 QScrollBar::add-line:vertical
 {
     font-size: 20px;
-      border: 1px solid #1b1b19;
-      border-radius: 2px;
-      background: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #ffa02f, stop: 1 #d7801a);
-      height: 14px;
-      subcontrol-position: bottom;
-      subcontrol-origin: margin;
+    border: none;
+    border-radius: 2px;
+    background: transparent;
+    height: 14px;
+    subcontrol-position: bottom;
+    subcontrol-origin: margin;
 }
 
 QScrollBar::sub-line:vertical
 {
     font-size: 20px;
-      border: 1px solid #1b1b19;
-      border-radius: 2px;
-      background: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #d7801a, stop: 1 #ffa02f);
-      height: 14px;
-      subcontrol-position: top;
-      subcontrol-origin: margin;
+    border: none;
+    border-radius: 2px;
+    background: transparent;
+    height: 14px;
+    subcontrol-position: top;
+    subcontrol-origin: margin;
 }
 
 QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical
 {
     font-size: 20px;
-      border: 1px solid black;
-      width: 1px;
-      height: 1px;
-      background: white;
+    /* border: 1px solid black; */
+    border: none;
+    /* width: 5px;
+    height: 5px; */
+    background: transparent;
+    color : transparent;
 }
 
 
 QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical
 {
     font-size: 20px;
-      background: none;
+    background: transparent;
+    border: none;
 }
 
 QTextEdit
