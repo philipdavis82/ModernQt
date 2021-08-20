@@ -239,11 +239,11 @@ class mainWindow(QtWidgets.QMainWindow):
         self.mainWidgetMap['scroll'].addScrollArea("right",C_QScrollArea(self.mainWidgetMap['scroll'],"right"))
         
         widget = self.mainWidgetMap['scroll'].getWidget("left")
-        widget.addWidget('1',C_QScrollItem(widget))
-        widget.addWidget('2',C_QScrollItem(widget))
-        widget.addWidget('3',C_QScrollItem(widget))
-        widget.addWidget('4',C_QScrollItem(widget))
-        widget.addWidget('5',C_QScrollItem(widget))
+        widget.addWidget('1',C_QScrollItem(self))
+        widget.addWidget('2',C_QScrollItem(self))
+        widget.addWidget('3',C_QScrollItem(self))
+        widget.addWidget('4',C_QScrollItem(self))
+        widget.addWidget('5',C_QScrollItem(self))
         pass
 
     def dummy(self):

@@ -25,14 +25,13 @@ QScrollArea
 """
 
 class C_QScrollItem(QtWidgets.QWidget):
-    # move = QtCore.pyqtSignal(QtGui.QMouseEvent)
+    moved = QtCore.pyqtSignal(QtGui.QMouseEvent)
     floating = QtCore.pyqtSignal()
     dropped  = QtCore.pyqtSignal()
     def __init__(self,parent):
         super().__init__(parent)
         self.Parent = parent
         self.setAttribute(QtCore.Qt.WA_StyledBackground)
-        # self.setAttribute(QtCore.Qt.WA_NoMousePropagation)
         self.setStyleSheet(WIDGET_STYLE_SHEET)
 
         self.setMinimumWidth(200)
@@ -44,27 +43,24 @@ class C_QScrollItem(QtWidgets.QWidget):
         self.__posoffset = None
 
     def mousePressEvent(self,event):
-        self.__floating = True
-        self.floating.emit()
-        # self.setMaximumWidth (self.width())
-        # self.setMaximumHeight(self.height())
         self.__posoffset = event.globalPos() - self.pos()
-        # print(self.__posoffset)
         self.raise_()
         
-        print("Grabbed")
+        
     
     def mouseReleaseEvent(self,event):
-        # self.setMaximumWidth (16777215)
-        # self.setMaximumHeight(16777215)
         print('Dropped')
         self.dropped.emit()
         self.__floating = False
         self.update()
     
     def mouseMoveEvent(self,event):
+        if not self.__floating: 
+            self.__floating = True
+            print("Grabbed")
+            self.floating.emit()
         self.move(event.globalPos() - self.__posoffset)
-        
+        self.moved.emit(event)
 
 class _C_QInnerScrollArea(QtWidgets.QWidget):
     def __init__(self,parent):
