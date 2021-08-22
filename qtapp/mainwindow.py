@@ -8,7 +8,7 @@ import PyQt5.QtWidgets as QtWidgets
 from qtapp.widgets.C_QNavigator         import C_QNavigatorDock,C_QNavigator
 from qtapp.widgets.C_QFileTree          import C_QFileTree
 from qtapp.widgets.C_QWindowCntl        import C_QExitBtn, C_QMaxMinBtn, C_QMinimizeBtn
-from qtapp.widgets.C_QScrollWidgets     import C_QScrollArea, C_QMultiScrollArea, C_QScrollItem
+from qtapp.widgets.C_QScrollWidgets     import C_QRenderArea, C_QScrollArea, C_QMultiScrollArea, C_QScrollItem
 from . import subwindows
 
 class Action(QtWidgets.QAction):
@@ -235,10 +235,11 @@ class mainWindow(QtWidgets.QMainWindow):
         self.mainWidgetMap['scroll'] = C_QMultiScrollArea(self)
         self.mainWidgetMap['scroll'].setVisible(False)
 
-        self.mainWidgetMap['scroll'].addScrollArea("left" ,C_QScrollArea(self.mainWidgetMap['scroll'],"left"))
-        self.mainWidgetMap['scroll'].addScrollArea("right",C_QScrollArea(self.mainWidgetMap['scroll'],"right"))
+        self.mainWidgetMap['scroll'].addScrollArea("left" ,C_QScrollArea(self.mainWidgetMap['scroll'],"left",C_QRenderArea(self)))
+        self.mainWidgetMap['scroll'].addScrollArea("right",C_QScrollArea(self.mainWidgetMap['scroll'],"right",C_QRenderArea(self)))
         
         widget = self.mainWidgetMap['scroll'].getWidget("left")
+        
         widget.addWidget('1',C_QScrollItem(self))
         widget.addWidget('2',C_QScrollItem(self))
         widget.addWidget('3',C_QScrollItem(self))
