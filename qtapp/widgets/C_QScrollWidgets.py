@@ -121,23 +121,44 @@ class C_QScrollItem(QtWidgets.QWidget):
     def mouseReleaseEvent(self,event):
         self.setStyleSheet(WIDGET_STYLE_SHEET)
         print('Dropped')
-        self.dropped.emit(self)
+        # self.dropped.emit(self)
         self.__floating = False
         self.update()
 
     def mouseMoveEvent(self,event):
         if not self.__floating: self.enterFloating()
-        self.moved.emit(event)
+        # self.moved.emit(event)
         event.accept()
 
     def enterFloating(self):
-        self.__floating = True
         print("Grabbed")
-        self.floating.emit(self)
+        
+        _drag = QtGui.QDrag(self)
+        _mime = QtCore.QMimeData()
+        _mime.setText("Floating Widget")
+        _drag.setMimeData(_mime)
+        
+        __render = QtGui.QPixmap(self.size())
+        self.render(__render)
+        _drag.setPixmap(__render)
 
-    def dragEnterEvent(self,event):
-        print(self,event)
+        _drag.exec()
 
+    # def dragLeaveEvent(self,event):
+        # print(event)
+        # event.accept()
+
+    # def dragEnterEvent(self,event):
+        # print(event)
+        # event.accept()
+
+    # def dragMoveEvent(self,event):
+        # print(event)
+        # event.accept()
+    
+    def dropEvent(self,event):
+        print(event)
+        event.accept()
 
 class _C_QInnerScrollArea(QtWidgets.QWidget):
     def __init__(self,parent):
@@ -218,8 +239,21 @@ class C_QScrollArea(QtWidgets.QScrollArea):
 
         self.setVertical()
         
+    def dragLeaveEvent(self,event):
+        print(event)
+        event.accept()
+
+    def dragEnterEvent(self,event):
+        print(event)
+        event.accept()
+
+    def dragMoveEvent(self,event):
+        print(event)
+        event.accept()
+    
     def dropEvent(self,event):
-        print(self, event)
+        print(event)
+        event.accept()
 
     def resizeEvent(self,event):
         if self.__layoutDirection == 'Horizontal':
