@@ -33,7 +33,8 @@ WIDGET_STYLE_SHEET_FLOATING = """
 QWidget
 {
     background: transparent;
-    border: 0px solid #ffa02f;
+    border: 4px solid #ffa02f;
+    border-radius: 6px;
 }
 QScrollArea
 {
@@ -87,8 +88,8 @@ class C_QRenderArea(QtWidgets.QLabel):
         CURRENT_MOUSE_SELECTION = None
         self.__rendering = False
 
-    def moveSignal(self,event):
-        self.move(event.globalPos() - self.Parent.pos() - self.__renderOffest)
+    def moveSignal(self,pos):
+        self.move(pos - self.Parent.pos() - self.__renderOffest)
 
 class C_QScrollItem(QtWidgets.QWidget):
     moved = QtCore.pyqtSignal(QtGui.QMouseEvent)
@@ -106,7 +107,7 @@ class C_QScrollItem(QtWidgets.QWidget):
         self.setSizePolicy(QtWidgets.QSizePolicy.Expanding,QtWidgets.QSizePolicy.Expanding)
         self.setWindowFlags(QtCore.Qt.Window | QtCore.Qt.FramelessWindowHint)
         # setup
-        self.setAcceptDrops(True)
+        # self.setAcceptDrops(True)
         
         self.__floating = False
         self.__posoffset = None
@@ -120,18 +121,18 @@ class C_QScrollItem(QtWidgets.QWidget):
         
     def mouseReleaseEvent(self,event):
         self.setStyleSheet(WIDGET_STYLE_SHEET)
-        print('Dropped')
+        # print('Dropped')
         # self.dropped.emit(self)
         self.__floating = False
         self.update()
 
     def mouseMoveEvent(self,event):
-        if not self.__floating: self.enterFloating()
-        # self.moved.emit(event)
+        if not self.__floating: self.enterFloating(event.pos())
         event.accept()
 
-    def enterFloating(self):
-        print("Grabbed")
+    def enterFloating(self,offset):
+        
+        # print("Grabbed")
         
         _drag = QtGui.QDrag(self)
         _mime = QtCore.QMimeData()
@@ -142,23 +143,13 @@ class C_QScrollItem(QtWidgets.QWidget):
         self.render(__render)
         _drag.setPixmap(__render)
 
+        self.setStyleSheet(WIDGET_STYLE_SHEET_FLOATING)
+
+        self.floating.emit(self)
+
         _drag.exec()
 
-    # def dragLeaveEvent(self,event):
-        # print(event)
-        # event.accept()
-
-    # def dragEnterEvent(self,event):
-        # print(event)
-        # event.accept()
-
-    # def dragMoveEvent(self,event):
-        # print(event)
-        # event.accept()
-    
-    def dropEvent(self,event):
-        print(event)
-        event.accept()
+        self.setStyleSheet(WIDGET_STYLE_SHEET)
 
 class _C_QInnerScrollArea(QtWidgets.QWidget):
     def __init__(self,parent):
@@ -174,15 +165,23 @@ class _C_QInnerScrollArea(QtWidgets.QWidget):
 
         self.setSizePolicy(QtWidgets.QSizePolicy.Expanding,QtWidgets.QSizePolicy.Expanding)
         self.__N = 0
+
+        self.__widgets = []
         # self.
     
     def setDirection(self,direction):
-        print(direction)
+        # print(direction)
         self.__layoutDirection = direction
 
     def takeAt(self,N):
+        try: self.__widgets.pop(N)
+        except: pass
         child = self.layout.takeAt(N)
-        if child is None: return child
+        if child is None:
+            minimum = 0 
+            for widget in self.__widgets: minimum += (widget.minimumHeight() + self._spacing)
+            self.setMinimumParameter(minimum)
+            return child
         self.__N -= 1
         self.changeMinimumParameter( - child.widget().minimumHeight() - self._spacing)
         return child
@@ -195,9 +194,12 @@ class _C_QInnerScrollArea(QtWidgets.QWidget):
         raise Exception("Failed")
 
     def setMinimumParameter(self,min):
+        min += self._spacing
         if self.__layoutDirection == "Horizontal" : 
+            self.setMaximumWidth(min)
             return self.setMinimumWidth(min)
-        if self.__layoutDirection == "Vertical" : 
+        if self.__layoutDirection == "Vertical" :
+            self.setMaximumHeight(min) 
             return self.setMinimumHeight(min)
         raise Exception("Failed")
     
@@ -206,6 +208,7 @@ class _C_QInnerScrollArea(QtWidgets.QWidget):
         self.setMinimumParameter(self.minimumParameter() + min)
 
     def addWidget(self,widget):
+        self.__widgets.append(widget)
         if   self.__layoutDirection == "Horizontal" : 
             self.layout.addWidget(widget,0,self.__N)
             self.changeMinimumParameter( widget.minimumHeight() + self._spacing )
@@ -214,14 +217,23 @@ class _C_QInnerScrollArea(QtWidgets.QWidget):
             self.changeMinimumParameter( widget.minimumWidth() + self._spacing )
         else: raise Exception(f"direction needs to be 'Horizontal' or 'Vertical'")
         self.__N += 1
-         
+
+    def getDropPosition(self,event,offset):
+        # TODO both orientations
+        i = 0
+        for i,widget in enumerate(self.__widgets):
+            if (event.pos().y()+offset) < (widget.pos().y() + (widget.height()/2)): break
+        else:
+            return i+1
+        return i
+        
+
 class C_QScrollArea(QtWidgets.QScrollArea):
     def __init__(self,parent,name=None,renderArea=None):
         super().__init__(parent)
         self.setAttribute(QtCore.Qt.WA_StyledBackground)
         self.setStyleSheet(SCROLL_STYLE_SHEET)
         self.setMouseTracking(True)
-        # self.installEventFilter(__EVENT_HANDLER)
         self.__name = name
 
         # setup
@@ -231,29 +243,66 @@ class C_QScrollArea(QtWidgets.QScrollArea):
         self.__innerWidget = _C_QInnerScrollArea(self)
         self.setWidget(self.__innerWidget)
         self.__innerWidget.setVisible(True)
-        self.__heldWidgets = {}
+        self.__heldWidgets = []
         self.__layoutDirection = None
-
-        if renderArea is None: self.__renderArea = C_QRenderArea(self)
-        else: self.__renderArea = renderArea
+        self.__scrollTimer = QtCore.QTimer(self)
+        self.__dragTrack = None
 
         self.setVertical()
         
     def dragLeaveEvent(self,event):
-        print(event)
+        if self.__scrollTimer.isActive(): 
+            self.__scrollTimer.stop()
+        if not self.__dragTrack is None: 
+            II = self.getIndex(self.__dragTrack)
+            if not II is None: self.removeWidget(self.__dragTrack)
+        self.resetLayout()
+        self.__dragTrack = None
         event.accept()
 
     def dragEnterEvent(self,event):
-        print(event)
+        if self.__scrollTimer.isActive(): 
+            self.__scrollTimer.stop()
+        self.__dragTrack = event.source()
+        self.addWidget(self.__dragTrack)
+        self.resetLayout()
         event.accept()
 
     def dragMoveEvent(self,event):
-        print(event)
+        # TODO Make this work for horizontal areas
+        self.__dragTrack = event.source()
+        if event.pos().y() < 20:
+            if not self.__scrollTimer.isActive():
+                self.__scrollTimer = QtCore.QTimer(self) 
+                self.__scrollTimer.timeout.connect(self.scrollUp)
+                self.__scrollTimer.start(50)
+        elif event.pos().y() > self.height()-20:
+            if not self.__scrollTimer.isActive():
+                self.__scrollTimer = QtCore.QTimer(self) 
+                self.__scrollTimer.timeout.connect(self.scrollDown)
+                self.__scrollTimer.start(50)
+        elif self.__scrollTimer.isActive(): 
+            self.__scrollTimer.stop()
+        I = self.__innerWidget.getDropPosition(event,self.verticalScrollBar().value())
+        II = self.getIndex(event.source())
+        if I != II:
+            if not II is None: self.removeWidget(event.source())
+            self.insertWidget(I,event.source())
         event.accept()
     
     def dropEvent(self,event):
-        print(event)
+        if self.__scrollTimer.isActive(): 
+            self.__scrollTimer.stop()
+        # self.__innerWidget.dropWidget(event.source())
         event.accept()
+
+    def scrollDown(self):
+        scrollbar = self.verticalScrollBar()
+        scrollbar.setValue(scrollbar.value()+20)
+
+    def scrollUp(self):
+        scrollbar = self.verticalScrollBar()
+        scrollbar.setValue(scrollbar.value()-20)
 
     def resizeEvent(self,event):
         if self.__layoutDirection == 'Horizontal':
@@ -261,18 +310,29 @@ class C_QScrollArea(QtWidgets.QScrollArea):
         if self.__layoutDirection == 'Vertical':
             self.__innerWidget.resize(self.width()-10,self.__innerWidget.height())
 
-    def addWidget(self,name:str,widget:C_QScrollItem):
-        assert(type(widget) == C_QScrollItem)
-        
-        widget.floating.connect(self.__renderArea.render)
-        widget.dropped.connect(self.__renderArea.removeRender)
-        widget.moved.connect(self.__renderArea.moveSignal)
-
-        self.__heldWidgets[name] = widget
+    def getIndex(self,widget):
+        try: return self.__heldWidgets.index(widget)
+        except: return None
+    
+    def addWidget(self,widget):
+        self.__heldWidgets.append(widget)
+        widget.floating.connect(self.widgetEnteredFloating)
         self.resetLayout()
 
-    def removeWidget(self,name:str):
-        self.__heldWidgets.pop(name).setVisible(False)
+
+    def widgetEnteredFloating(self,widget):
+        self.__dragTrack = None
+        self.removeWidget(widget)
+
+    def removeWidget(self,widget):
+        widget.setVisible(False)
+        self.__heldWidgets.pop(self.getIndex(widget))
+        widget.floating.disconnect(self.widgetEnteredFloating)
+        self.resetLayout()
+
+    def insertWidget(self,index,widget):
+        self.__heldWidgets.insert(index,widget)
+        self.resetLayout()
 
     def setVertical(self):
         if self.__layoutDirection == "Vertical": return
@@ -290,8 +350,11 @@ class C_QScrollArea(QtWidgets.QScrollArea):
         self.__clearLayout()
         self.__setUpLayout()
 
+    def removeWidget(self,widget):
+        try: self.__heldWidgets.pop(self.__heldWidgets.index(widget))
+        except: print(f"Failed To Remove Widget {widget}")
     def getWidget(self,name):
-        return self.__heldWidgets.get(name)
+        return self.__heldWidgetTable.get(name)
 
     def __clearLayout(self):
         child = True
@@ -301,7 +364,7 @@ class C_QScrollArea(QtWidgets.QScrollArea):
             child.widget().setVisible(False)
     
     def __setUpLayout(self):
-        for i,widget in enumerate(self.__heldWidgets.values()):
+        for i,widget in enumerate(self.__heldWidgets):
             self.__innerWidget.addWidget(widget)
             widget.setVisible(True) 
 

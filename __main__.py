@@ -1,6 +1,5 @@
 import sys,os
 
-#test
 # Setup globals
 import __global__
 __global__.HOME_DIR = os.path.abspath(os.path.split(__file__)[0])
