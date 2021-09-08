@@ -99,6 +99,7 @@ class C_QScrollItem(QtWidgets.QWidget):
         super().__init__(parent)
         self.Parent = parent
         self.setAttribute(QtCore.Qt.WA_StyledBackground)
+        
         self.setStyleSheet(WIDGET_STYLE_SHEET)
 
         self.setMinimumWidth(100)
@@ -111,6 +112,10 @@ class C_QScrollItem(QtWidgets.QWidget):
         
         self.__floating = False
         self.__posoffset = None
+        self.__defaultStyleSheet = WIDGET_STYLE_SHEET
+        self.__floatingStyleSheet = WIDGET_STYLE_SHEET_FLOATING
+
+        
 
     def mouseOffset(self):
         return self.__posoffset
@@ -120,7 +125,7 @@ class C_QScrollItem(QtWidgets.QWidget):
         self.raise_()
         
     def mouseReleaseEvent(self,event):
-        self.setStyleSheet(WIDGET_STYLE_SHEET)
+        self.setStyleSheet(self.__defaultStyleSheet)
         # print('Dropped')
         # self.dropped.emit(self)
         self.__floating = False
@@ -138,18 +143,25 @@ class C_QScrollItem(QtWidgets.QWidget):
         _mime = QtCore.QMimeData()
         _mime.setText("Floating Widget")
         _drag.setMimeData(_mime)
+        _drag.setHotSpot(offset)
         
         __render = QtGui.QPixmap(self.size())
         self.render(__render)
         _drag.setPixmap(__render)
 
-        self.setStyleSheet(WIDGET_STYLE_SHEET_FLOATING)
+        self.setStyleSheet(self.__floatingStyleSheet)
 
         self.floating.emit(self)
 
         _drag.exec()
 
-        self.setStyleSheet(WIDGET_STYLE_SHEET)
+        self.setStyleSheet(self.__defaultStyleSheet)
+
+    def setDefaultStyle(self,style:str):
+        self.__defaultStyleSheet = style
+    
+    def setPreviewStyle(self,style:str):
+        self.__floatingStyleSheet = style
 
 class _C_QInnerScrollArea(QtWidgets.QWidget):
     def __init__(self,parent):
@@ -221,12 +233,18 @@ class _C_QInnerScrollArea(QtWidgets.QWidget):
     def getDropPosition(self,event,offset):
         # TODO both orientations
         i = 0
-        for i,widget in enumerate(self.__widgets):
-            if (event.pos().y()+offset) < (widget.pos().y() + (widget.height()/2)): break
-        else:
-            return i+1
-        return i
-        
+        if self.__layoutDirection == "Vertical":
+            for i,widget in enumerate(self.__widgets):
+                if (event.pos().y()+offset) < (widget.pos().y() + (widget.height()/2)): break
+            else:
+                return i+1
+            return i
+        elif self.__layoutDirection == "Horizontal":
+            for i,widget in enumerate(self.__widgets):
+                if (event.pos().x()+offset) < (widget.pos().x() + (widget.width()/2)): break
+            else:
+                return i+1
+            return i
 
 class C_QScrollArea(QtWidgets.QScrollArea):
     def __init__(self,parent,name=None,renderArea=None):
@@ -248,6 +266,8 @@ class C_QScrollArea(QtWidgets.QScrollArea):
         self.__scrollTimer = QtCore.QTimer(self)
         self.__dragTrack = None
         self.__sliderVal = 0
+        self.__previewWidget = C_QScrollItem(self)
+        self.__previewWidget.setDefaultStyle(WIDGET_STYLE_SHEET_FLOATING)
 
         self.setVertical()
         
@@ -272,19 +292,35 @@ class C_QScrollArea(QtWidgets.QScrollArea):
     def dragMoveEvent(self,event):
         # TODO Make this work for horizontal areas
         self.__dragTrack = event.source()
-        if event.pos().y() < 20:
-            if not self.__scrollTimer.isActive():
-                self.__scrollTimer = QtCore.QTimer(self) 
-                self.__scrollTimer.timeout.connect(self.scrollUp)
-                self.__scrollTimer.start(25)
-        elif event.pos().y() > self.height()-20:
-            if not self.__scrollTimer.isActive():
-                self.__scrollTimer = QtCore.QTimer(self) 
-                self.__scrollTimer.timeout.connect(self.scrollDown)
-                self.__scrollTimer.start(25)
-        elif self.__scrollTimer.isActive(): 
-            self.__scrollTimer.stop()
-        I = self.__innerWidget.getDropPosition(event,self.verticalScrollBar().value())
+        if self.__layoutDirection == "Vertical":
+            if event.pos().y() < 20:
+                if not self.__scrollTimer.isActive():
+                    self.__scrollTimer = QtCore.QTimer(self) 
+                    self.__scrollTimer.timeout.connect(self.scrollUp)
+                    self.__scrollTimer.start(25)
+            elif event.pos().y() > self.height()-20:
+                if not self.__scrollTimer.isActive():
+                    self.__scrollTimer = QtCore.QTimer(self) 
+                    self.__scrollTimer.timeout.connect(self.scrollDown)
+                    self.__scrollTimer.start(25)
+            elif self.__scrollTimer.isActive(): 
+                self.__scrollTimer.stop()
+            I = self.__innerWidget.getDropPosition(event,self.verticalScrollBar().value())
+        if self.__layoutDirection == "Horizontal":
+            if event.pos().x() < 20:
+                if not self.__scrollTimer.isActive():
+                    self.__scrollTimer = QtCore.QTimer(self) 
+                    self.__scrollTimer.timeout.connect(self.scrollLeft)
+                    self.__scrollTimer.start(25)
+            elif event.pos().x() > self.width()-20:
+                if not self.__scrollTimer.isActive():
+                    self.__scrollTimer = QtCore.QTimer(self) 
+                    self.__scrollTimer.timeout.connect(self.scrollRight)
+                    self.__scrollTimer.start(25)
+            elif self.__scrollTimer.isActive(): 
+                self.__scrollTimer.stop()
+            I = self.__innerWidget.getDropPosition(event,self.horizontalScrollBar().value())
+        # I = self.__innerWidget.getDropPosition(event,self.verticalScrollBar().value())
         II = self.getIndex(event.source())
         if I != II:
             if not II is None: self.removeWidget(event.source())
@@ -306,6 +342,16 @@ class C_QScrollArea(QtWidgets.QScrollArea):
 
     def scrollUp(self):
         scrollbar = self.verticalScrollBar()
+        scrollbar.setValue(scrollbar.value()-15)
+        self.__sliderVal = scrollbar.value() 
+    
+    def scrollRight(self):
+        scrollbar = self.horizontalScrollBar()
+        scrollbar.setValue(scrollbar.value()+15)
+        self.__sliderVal = scrollbar.value()
+
+    def scrollLeft(self):
+        scrollbar = self.horizontalScrollBar()
         scrollbar.setValue(scrollbar.value()-15)
         self.__sliderVal = scrollbar.value() 
 

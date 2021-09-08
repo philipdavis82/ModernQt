@@ -234,13 +234,27 @@ class mainWindow(QtWidgets.QMainWindow):
 
         self.mainWidgetMap['scroll'] = C_QMultiScrollArea(self)
         self.mainWidgetMap['scroll'].setVisible(False)
+        
 
         self.mainWidgetMap['scroll'].addScrollArea("left" ,C_QScrollArea(self.mainWidgetMap['scroll'],"left"))
+        
         self.mainWidgetMap['scroll'].addScrollArea("right",C_QScrollArea(self.mainWidgetMap['scroll'],"right"))
+        self.mainWidgetMap['scroll'].addScrollArea(":)",C_QScrollArea(self.mainWidgetMap['scroll'],"right"))
         
         widget = self.mainWidgetMap['scroll'].getWidget("left")
         
-        widget.addWidget(C_QScrollItem(self))
+        class CustomWidget(C_QScrollItem):
+            def __init__(self, parent):
+                super().__init__(parent)
+
+                self.__slider = QtWidgets.QSlider(self)
+                self.__slider.move(10,10)
+                self.__slider.valueChanged.connect(self.dummy)
+
+            def dummy(self,value):
+                print(f"Hello Value = {value}")
+
+        widget.addWidget(CustomWidget(self))
         widget.addWidget(C_QScrollItem(self))
         widget.addWidget(C_QScrollItem(self))
         widget.addWidget(C_QScrollItem(self))
