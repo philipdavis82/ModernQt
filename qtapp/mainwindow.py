@@ -11,6 +11,7 @@ from qtapp.widgets.C_QWindowCntl        import C_QExitBtn, C_QMaxMinBtn, C_QMini
 from qtapp.widgets.C_QScrollWidgets     import C_QRenderArea, C_QScrollArea, C_QMultiScrollArea, C_QScrollItem
 from . import subwindows
 
+
 class Action(QtWidgets.QAction):
     def __init__(self,*args,shortcut=None):
         super(Action,self).__init__(*args)
